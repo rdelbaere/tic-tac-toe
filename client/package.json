@@ -6,6 +6,7 @@
         "watch": "webpack --watch"
     },
     "dependencies": {
+        "socket.io-client": "^4.7.2",
         "typescript": "^5.2.2",
         "webpack": "^5.88.2"
     },

@@ -1,0 +1,14 @@
+{
+    "name": "tic-tac-toe-server",
+    "module": "index.ts",
+    "type": "module",
+    "devDependencies": {
+        "bun-types": "latest"
+    },
+    "peerDependencies": {
+        "typescript": "^5.0.0"
+    },
+    "dependencies": {
+        "socket.io": "^4.7.2"
+    }
+}
