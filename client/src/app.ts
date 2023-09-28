@@ -7,7 +7,10 @@ const gridElement = document.getElementById("grid");
 const waitingElement = document.getElementById("waiting");
 
 findGameButton.addEventListener("click", () => {
+    displayWaitingMatchScreen();
+
     socket.on("startMatch", matchInfo => {
+        hideWaitingScreen();
         findGameButton.classList.add("hide");
         gridElement.classList.remove("hide");
         console.log(matchInfo);
@@ -48,6 +51,11 @@ findGameButton.addEventListener("click", () => {
 
    socket.emit("requestMatch");
 });
+
+const displayWaitingMatchScreen = () => {
+    waitingElement.textContent = "En recherche de joueur ...";
+    waitingElement.classList.remove("hide");
+};
 
 const displayWaitingPlayerScreen = () => {
     waitingElement.textContent = "En attente de l'autre joueur ...";
