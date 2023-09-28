@@ -6,12 +6,29 @@
 }
 
 html, body {
+    width: 100vw;
     height: 100vh;
+    font-size: 16px;
     margin: 0;
     background-color: var(--color-dark);
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
+}
+
+.button {
+    background-color: var(--color-primary);
+    font-size: 1.4rem;
+    font-weight: 700;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.hide {
+    display: none!important;
 }
 
 #grid {
@@ -56,3 +73,12 @@ html, body {
     }
 }
 
+#waiting {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--color-light);
+}

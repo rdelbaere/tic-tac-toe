@@ -1,64 +1,69 @@
 import { io } from "socket.io-client";
-import '../style/app.scss';
+import "../style/app.scss";
 
-const findGameButton = document.getElementById('findGame');
-findGameButton.addEventListener('click', () => {
-   const socket = io('ws://localhost:3000');
+const socket = io("ws://localhost:3000");
+const findGameButton = document.getElementById("findGame");
+const gridElement = document.getElementById("grid");
+const waitingElement = document.getElementById("waiting");
+
+findGameButton.addEventListener("click", () => {
+    socket.on("startMatch", matchInfo => {
+        findGameButton.classList.add("hide");
+        gridElement.classList.remove("hide");
+        console.log(matchInfo);
+        if (!matchInfo.mainPlayer) {
+            displayWaitingPlayerScreen();
+        }
+
+        gridElement.addEventListener('click', (e: PointerEvent) => {
+            const target = e.target as Element;
+            if (target.id === 'grid' || target.classList.contains('cross') || target.classList.contains('circle')) {
+                return;
+            }
+
+            target.classList.add(matchInfo.symbol);
+            socket.emit("played", {
+                position: Array.from(gridElement.children).indexOf(target),
+                symbol: matchInfo.symbol,
+            });
+            displayWaitingPlayerScreen();
+        });
+
+        socket.on("turnEnd", turn => {
+            console.log("Tour :", turn);
+
+            const cell = Array.from(gridElement.children)[turn.position];
+            cell.classList.add(turn.symbol);
+            hideWaitingScreen();
+        });
+
+        socket.on("end", result => {
+           if (result.win) {
+                displayWinScreen();
+           } else {
+                displayLooseScreen();
+           }
+        });
+    });
+
+   socket.emit("requestMatch");
 });
 
+const displayWaitingPlayerScreen = () => {
+    waitingElement.textContent = "En attente de l'autre joueur ...";
+    waitingElement.classList.remove("hide");
+};
 
-// let mainPlayer = true;
-// const grid = document.getElementById('grid');
-// grid.addEventListener('click', (e: PointerEvent) => {
-//    const target = e.target as Element;
-//    if (target.id === 'grid' || target.classList.contains('cross') || target.classList.contains('circle')) {
-//       return;
-//    }
-//
-//    target.classList.add(mainPlayer ? 'cross' : 'circle');
-//    mainPlayer = !mainPlayer;
-//
-//    setTimeout(() => {
-//       const result = checkEnd();
-//       if (result !== null) {
-//          alert(result + ' win');
-//          window.location.reload();
-//       }
-//    }, 1);
-// });
-//
-// function checkEnd() {
-//    const cells = document.querySelectorAll('#grid > div');
-//
-//    const lines = [
-//        [0, 1, 2],
-//        [0, 3, 6],
-//        [0, 4, 8],
-//        [3, 4, 5],
-//        [6, 7, 8],
-//        [2, 4, 6],
-//        [1, 4, 7],
-//        [2, 5, 8],
-//    ];
-//
-//    for (let line of lines) {
-//       let countCross = 0;
-//       let countCircle = 0;
-//
-//       for (let i of line) {
-//          if (cells[i].classList.contains('cross')) {
-//             countCross++;
-//          } else if (cells[i].classList.contains('circle')) {
-//             countCircle++;
-//          }
-//       }
-//
-//       if (countCross === 3) {
-//          return 'cross';
-//       } else if (countCircle === 3) {
-//          return 'cricle';
-//       }
-//    }
-//
-//    return null;
-// }
+const displayWinScreen = () => {
+    waitingElement.textContent = "Gagné !";
+    waitingElement.classList.remove("hide");
+};
+
+const displayLooseScreen = () => {
+    waitingElement.textContent = "PERDU !";
+    waitingElement.classList.remove("hide");
+};
+
+const hideWaitingScreen = () => {
+    waitingElement.classList.add("hide");
+};
